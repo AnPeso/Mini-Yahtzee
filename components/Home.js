@@ -7,6 +7,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { NBR_OF_DICES, NBR_OF_THROWS, MIN_SPOT, MAX_SPOT, BONUS_POINTS, BONUS_POINTS_LIMIT } from '../constants/Game';
 import styles from '../style/style';
+import style from '../style/style';
 
 const Home = ({ navigation }) => {
 
@@ -21,23 +22,24 @@ const Home = ({ navigation }) => {
     }
 
     return(
-        <View>
+        <View style={styles.container}>
         <Header />
         <View>
             <MaterialCommunityIcons name="information" size={90} color="steelblue" />
             {!hasPlayerName ? 
             <>
             <Text> For scoreboard enter your name...</Text>
-            <TextInput onChangeText={setPlayerName} autoFocus={true}/>
+            <TextInput style={style.nameInput} onChangeText={setPlayerName} autoFocus={true}/>
             <Pressable
+            style={styles.button}
             onPress={() => handlePlayerName(playerName)}>
                 <Text>OK</Text>
             </Pressable>
             </>
             :
             <>
-            <Text>Rules of the game</Text>
-            <Text multiline="true">THE GAME: Upper section of the classic Yahtzee
+            <Text style={style.title}>Rules of the game</Text>
+            <Text multiline="true" style={style.gameinfo}>THE GAME: Upper section of the classic Yahtzee
             dice game. You have {NBR_OF_DICES} dices and
             for the every dice you have {NBR_OF_THROWS}
             throws. After each throw you can keep dices in
@@ -59,7 +61,7 @@ const Home = ({ navigation }) => {
             <Text> Good luck, {playerName}</Text>
             <Pressable
             onPress={() => navigation.navigate('Gameboard', {player: playerName})}>
-                <Text>PLAY</Text>
+                <Text style={style.button}>PLAY</Text>
             </Pressable>
             </> 
             }

@@ -41,5 +41,6 @@ export default function App() {
         <Tab.Screen name="Scoreboard" component={Scoreboard} />
       </Tab.Navigator>
     </NavigationContainer>
+    
   );
 }
