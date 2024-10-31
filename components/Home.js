@@ -25,44 +25,50 @@ const Home = ({ navigation }) => {
         <View style={styles.container}>
         <Header />
         <View>
-            <MaterialCommunityIcons name="information" size={90} color="steelblue" />
+            <MaterialCommunityIcons name="information" size={70} padding={5} margin={5} color="#ab84a2" />
             {!hasPlayerName ? 
             <>
-            <Text> For scoreboard enter your name...</Text>
-            <TextInput style={style.nameInput} onChangeText={setPlayerName} autoFocus={true}/>
+            <Text style={styles.text}> For scoreboard enter your name...</Text>
+            <View style={styles.inputContainer}>
+            <TextInput style={style.Textinput} onChangeText={setPlayerName} autoFocus={true}/>
+            </View>
+            <View style={styles.buttonContainer}>
             <Pressable
-            style={styles.button}
-            onPress={() => handlePlayerName(playerName)}>
-                <Text>OK</Text>
+                style={styles.button}
+                onPress={() => handlePlayerName(playerName)}>
+                <Text style={styles.text}>OK</Text>
             </Pressable>
+            </View>
             </>
             :
             <>
-            <Text style={style.title}>Rules of the game</Text>
-            <Text multiline="true" style={style.gameinfo}>THE GAME: Upper section of the classic Yahtzee
+            <Text style={style.text}>Rules of the game</Text>
+            <Text multiline="true" style={style.gameinfo}>THE GAME: {'\n'} Upper section of the classic Yahtzee
             dice game. You have {NBR_OF_DICES} dices and
-            for the every dice you have {NBR_OF_THROWS}
-            throws. After each throw you can keep dices in
+            for the every dice you have {NBR_OF_THROWS} throws. After each throw you can keep dices in
             order to get same dice spot counts as many as
-            possible. In the end of the turn you must select
+            possible. {'\n'} In the end of the turn you must select
             your points from {MIN_SPOT} to {MAX_SPOT}.
             Game ends when all points have been selected.
-            The order for selecting those is free.
+            The order for selecting those is free. {'\n'} {'\n'}
             POINTS: After each turn game calculates the sum
             for the dices you selected. Only the dices having
             the same spot count are calculated. Inside the
             game you can not select same points from
-            {MIN_SPOT} to {MAX_SPOT} again.
+            {MIN_SPOT} to {MAX_SPOT} again. {'\n'}{'\n'}
             GOAL: To get points as much as possible.
             {BONUS_POINTS_LIMIT} points is the limit of
             getting bonus which gives you {BONUS_POINTS}
             points more.
             </Text>
-            <Text> Good luck, {playerName}</Text>
-            <Pressable
-            onPress={() => navigation.navigate('Gameboard', {player: playerName})}>
-                <Text style={style.button}>PLAY</Text>
+            <Text style={styles.text}> Good luck, {playerName}</Text>
+            <View style={styles.buttonContainer}>
+            <Pressable style={styles.button}
+                onPress={() => navigation.navigate('Gameboard', 
+                {player: playerName})}>
+                <Text style={style.text}>PLAY</Text>
             </Pressable>
+            </View>
             </> 
             }
         </View>

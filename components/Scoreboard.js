@@ -1,141 +1,70 @@
-// import { useState, useEffect } from "react";
-// import { Pressable, Text, View } from "react-native";
-// import Header from "./Header";
-// import Footer from "./Footer";
-// import { SCOREBOARD_KEY } from "../constants/Game";
-// import styles from '../style/style';
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// const Scoreboard = ({ navigation }) => {
-//     const [scores, setScores] = useState([]);
-
-//     useEffect(() => {
-//         const unsubscribe = navigation.addListener('focus', getScoreboardData);
-//         return unsubscribe;
-//     }, [navigation]);
-
-//     const getScoreboardData = async () => {
-//         try {
-//             const jsonValue = await AsyncStorage.getItem(SCOREBOARD_KEY);
-//             if (jsonValue !== null) {
-//                 const tmpScores = JSON.parse(jsonValue);
-//                 console.log("Temporary Scores:", tmpScores);
-//                 if (Array.isArray(tmpScores) && tmpScores.every(score => score.name && score.date && score.time && score.points)) {
-//                     setScores(tmpScores);
-//                     console.log("Read successful");
-//                     console.log("Number of scores: " + tmpScores.length);
-//                 } else {
-//                     console.error("Expected tmpScores to be an array of valid score objects, but got:", tmpScores);
-//                 }
-//             }
-//         } catch (e) {
-//             console.log('Read error: ' + e);
-//         }
-//     }
-
-//     const clearScoreboard = async () => {
-//         try {
-//             await AsyncStorage.removeItem(SCOREBOARD_KEY);
-//             setScores([]);
-//         } catch (e) {
-//             console.log('Clear error: ' + e);
-//         }
-//     }
-
-//     return (
-//         <>
-//             <Header />
-//             <View>
-//                 <Text style={styles.heading}>Scoreboard</Text>
-//                 {scores.length > 0 ? (
-//                     scores.map((score, index) => (
-//                         <View key={index} style={styles.scoreRow}>
-//                             <Text>{score.name} - {score.date} {score.time}: {score.points} points</Text>
-//                         </View>
-//                     ))
-//                 ) : (
-//                     <Text>No scores yet</Text>
-//                 )}
-//                 <Pressable onPress={clearScoreboard}>
-//                     <Text>Clear Scores</Text>
-//                 </Pressable>
-//             </View>
-//             <Footer />
-//         </>
-//     );
-// };
-
-// export default Scoreboard;
-import { useState, useEffect } from "react";
-import { DeviceEventEmitter, Pressable, Text, View } from "react-native";
+import { Text, View, FlatList, Button, Pressable } from "react-native";
+import { useState, useEffect } from 'react';
+import { SCOREBOARD_KEY, MAX_NBR_OF_SCOREBOARD_ROWS } from "../constants/Game";
 import Header from "./Header";
 import Footer from "./Footer";
-import { MAX_NBR_OF_SCOREBOARD_ROWS, SCOREBOARD_KEY } from "../constants/Game";
-import styles from '../style/style';
+import styles from "../style/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Scoreboard = ({ navigation }) => {
-    const [scores, setScores] = useState([]);
+export default Scoreboard = ({ navigation }) => {
+    const [score, setScore] = useState([]);
 
     useEffect(() => {
-        const getScoreboardData = async () => {
-            try {
-                const jsonValue = await AsyncStorage.getItem(SCOREBOARD_KEY);
-                if (jsonValue !== null) {
-                    let tmpScores = JSON.parse(jsonValue);
-                    tmpScores.sort((a, b) => b.points - a.points); // Muutettu 'sum' -> 'points'
-                    tmpScores = tmpScores.slice(0, MAX_NBR_OF_SCOREBOARD_ROWS);
-                    setScores(tmpScores); // Poistettu {} ympäriltä
-                }
-            } catch (error) {
-                console.error("Failed to fetch scores", error);
-            }
-        };
+        const unsubscribe = navigation.addListener('focus', () => {
+            getScoreboardData();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
-        getScoreboardData();
+    const getScoreboardData = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem(SCOREBOARD_KEY);
+            if (jsonValue !== null) {
+                const tmpScores = JSON.parse(jsonValue);
+                // Rajoita näkyvien rivien määrä 
+                const limitedScores = tmpScores.slice(0, MAX_NBR_OF_SCOREBOARD_ROWS);
+                setScore(limitedScores);    
+            } else {
+                setScore([]); 
+            }  
+        } catch (e) {
+            console.error("Error fetching scoreboard data: ", e);
+        }
+    }
+    
 
-        // Listen for scoreboard updates
-        const subscription = DeviceEventEmitter.addListener('scoreboardUpdated', getScoreboardData);
-        return () => subscription.remove();
-    }, []);
-
-    // Clear scoreboard data from storage
     const clearScoreboard = async () => {
         try {
-            await AsyncStorage.removeItem(SCOREBOARD_KEY); 
-            setScores([]);
-        } catch (error) {
-            console.error("Error resetting the scoreboard:", error);
+            // Clear all AsyncStorage data
+            await AsyncStorage.clear();
+            setScore([]); 
+        } catch (e) {
+            console.error("Error clearing AsyncStorage: ", e);
         }
-    };
-    console.log("Scores:", scores); // Tämä näyttää scores-tilan sisällön
+    }
 
     return (
-        <>
+        <View style={styles.container}>
             <Header />
-            <View>
-                <Text style={styles.heading}>Scoreboard</Text>
-                {scores.length > 0 ? (
-    scores.map((score, index) => (
-        <View key={index} style={styles.scoreRow}>
-            <Text>{score.name} - {score.date} {score.time}: 
-                {typeof score.points === 'object' ? 
-                    JSON.stringify(score.points) : 
-                    score.points} points
-            </Text>
-        </View>
-                    ))
-                ) : (
-                    <Text>No scores yet</Text>
-                )}
-                <Pressable onPress={clearScoreboard}>
-                    <Text>Clear Scores</Text>
+            <Text style={styles.text}>SCOREBOARD</Text>
+            <View style={styles.scoreListContainer}>
+                <FlatList
+                    data={score}
+                    renderItem={({ item }) => (
+                        <View style={styles.scoreItem}>
+                            <Text style={styles.scoreText}>{item.name} - {item.points} points</Text>
+                            <Text style={styles.dateText}>{item.date} {item.time}</Text>
+                        </View>
+                    )}
+                    keyExtractor={item => item.key.toString()}
+                />
+                <View style={styles.buttonContainer}>
+                <Pressable style={styles.button} onPress={clearScoreboard}>
+                <Text style={styles.text}>Clear scoreboard</Text>
                 </Pressable>
+                </View>
             </View>
             <Footer />
-        </>
-    );
-};
-
-export default Scoreboard;
-
+        </View>
+    )
+}

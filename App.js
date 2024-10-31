@@ -1,14 +1,25 @@
-//App.js
 import Home from './components/Home';
 import Gameboard from './components/Gameboard';
 import Scoreboard from './components/Scoreboard';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Metrics from './style/Metrics';
+import { useFonts } from 'expo-font';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+
+  const [loaded] = useFonts ({
+    RubikWetPaint:require('./assets/fonts/RubikWetPaint-Regular.ttf'),
+    
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -32,7 +43,7 @@ export default function App() {
             size={size}
             color={color}/>
           },
-          tabBarActiveTintColor: 'steelblue',
+          tabBarActiveTintColor: '#ab84a2',
           tabBarInactiveTintColor: 'gray',
         })}
       >
