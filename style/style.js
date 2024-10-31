@@ -71,7 +71,7 @@ export default StyleSheet.create({
     alignItems: 'center',     // Keskittää vaakasuunnassa
   },
   button: {
-    margin: Metrics.verticalScale(10),
+    margin: Metrics.verticalScale(2),
     flexDirection: "row",
     padding: Metrics.scale(10),
     backgroundColor: "#e1b9da",

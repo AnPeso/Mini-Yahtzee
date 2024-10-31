@@ -266,11 +266,15 @@ return (
                         <Pressable onPress={resetGame} style={styles.button}>
                             <Text style={styles.text}>Start Again</Text>
                         </Pressable>
+                    
+                
+                        <Pressable onPress={savePlayerPoints} style={styles.button}>
+                         <Text style={styles.text}>SAVE POINTS</Text>
+                         </Pressable>
                     </>
-                )}
-                <Pressable onPress={savePlayerPoints} style={styles.button}>
-                    <Text style={styles.text}>SAVE POINTS</Text>
-                </Pressable>
+
+            )}
+
             </View>
             <Footer />
         </View>
